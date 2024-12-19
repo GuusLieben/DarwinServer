@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import java.lang.reflect.AnnotatedElement;
-
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.StringUtilities;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -25,8 +23,10 @@ import org.dockbox.hartshorn.util.introspect.view.EnclosableView;
 import org.dockbox.hartshorn.util.introspect.view.PackageView;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.lang.reflect.AnnotatedElement;
+
 /**
- * TODO: #1059 Add documentation
+ * A view that provides access to the package of a class. This view is backed by a {@link Package} instance.
  *
  * @since 0.5.0
  *

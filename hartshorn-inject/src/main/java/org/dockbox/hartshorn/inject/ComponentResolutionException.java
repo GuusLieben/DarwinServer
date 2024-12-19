@@ -19,7 +19,8 @@ package org.dockbox.hartshorn.inject;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * TODO: #1060 Add documentation
+ * Exception to indicate that a component could not be resolved. This can be caused by a number of reasons, such as
+ * missing dependencies, invalid constructors, or absent bindings.
  *
  * @since 0.5.0
  *

@@ -16,11 +16,13 @@
 
 package org.dockbox.hartshorn.inject.component;
 
-import java.util.Collection;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.util.Collection;
+
 /**
- * TODO: #1060 Add documentation
+ * Registry for components. This registry is used to store and retrieve components that are registered with the IoC
+ * container.
  *
  * @since 0.4.1
  *
@@ -28,7 +30,19 @@ import org.dockbox.hartshorn.util.option.Option;
  */
 public interface ComponentRegistry {
 
+    /**
+     * Obtains all registered component containers. If no components are registered, an empty collection is returned.
+     *
+     * @return all registered component containers
+     */
     Collection<ComponentContainer<?>> containers();
 
+    /**
+     * Obtains a component container for the provided type. If no component is registered for the provided type, an
+     * empty option is returned.
+     *
+     * @param type the type of the component
+     * @return a component container for the provided type
+     */
     Option<ComponentContainer<?>> container(Class<?> type);
 }

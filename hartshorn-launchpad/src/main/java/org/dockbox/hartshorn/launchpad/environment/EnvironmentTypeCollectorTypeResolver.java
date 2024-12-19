@@ -16,23 +16,23 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 /**
- * TODO: #1060 Add documentation
+ * A {@link EnvironmentTypeResolver} that uses an {@link EnvironmentTypeCollector} to resolve types.
  *
  * @since 0.6.0
  *
  * @author Guus Lieben
  */
-public class ClassPathEnvironmentTypeResolver implements EnvironmentTypeResolver {
+public class EnvironmentTypeCollectorTypeResolver implements EnvironmentTypeResolver {
 
     private final EnvironmentTypeCollector typeCollector;
 
-    public ClassPathEnvironmentTypeResolver(EnvironmentTypeCollector typeCollector) {
+    public EnvironmentTypeCollectorTypeResolver(EnvironmentTypeCollector typeCollector) {
         this.typeCollector = typeCollector;
     }
 

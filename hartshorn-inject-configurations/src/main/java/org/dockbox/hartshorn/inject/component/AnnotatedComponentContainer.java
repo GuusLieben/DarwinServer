@@ -24,9 +24,10 @@ import org.dockbox.hartshorn.util.option.Option;
 import java.util.Objects;
 
 /**
- * TODO: #1060 Add documentation
+ * Represents a container for a component that is annotated with {@link Component} or a derivative annotation. This
+ * container provides access to the component's annotation, the component itself, and the type of the component.
  *
- * @param <T> ...
+ * @param <T> the type of the component
  *
  * @since 0.4.1
  *

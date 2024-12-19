@@ -25,7 +25,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * TODO: #1060 Add documentation
+ * A graph visitor that validates the presence of dependencies in a graph. This visitor is used to determine if all
+ * dependencies in a graph are present, and if not, which dependencies are missing.
  *
  * @since 0.5.0
  *

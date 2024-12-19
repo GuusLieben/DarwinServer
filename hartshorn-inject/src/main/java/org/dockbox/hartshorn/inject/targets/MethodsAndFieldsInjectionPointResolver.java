@@ -16,12 +16,6 @@
 
 package org.dockbox.hartshorn.inject.targets;
 
-import java.lang.annotation.Annotation;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.dockbox.hartshorn.inject.InjectorEnvironment;
 import org.dockbox.hartshorn.inject.annotations.Inject;
 import org.dockbox.hartshorn.inject.annotations.Populate;
@@ -32,6 +26,12 @@ import org.dockbox.hartshorn.util.StreamableConfigurer;
 import org.dockbox.hartshorn.util.TypeUtils;
 import org.dockbox.hartshorn.util.introspect.view.AnnotatedGenericTypeView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
+import java.lang.annotation.Annotation;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A {@link ComponentInjectionPointsResolver} that resolves the injection points of a component by
@@ -93,7 +93,8 @@ public class MethodsAndFieldsInjectionPointResolver implements ComponentInjectio
     }
 
     /**
-     * TODO: #1060 Add documentation
+     * A configurer for the {@link MethodsAndFieldsInjectionPointResolver}, that allows for the configuration of
+     * supported annotations.
      *
      * @since 0.6.0
      *

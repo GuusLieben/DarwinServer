@@ -28,9 +28,11 @@ import org.dockbox.hartshorn.proxy.ProxyFactory;
 import org.dockbox.hartshorn.util.TypeUtils;
 
 /**
- * TODO: #1060 Add documentation
+ * A {@link ComponentPostProcessor} that configures components with a specific context. This context is created by the
+ * implementation of this class. Depending on how the component is being created, the context may be added directly to
+ * the component, or to the proxy that is created for the component.
  *
- * @param <C> ...
+ * @param <C> The type of the context that is being configured
  *
  * @since 0.5.0
  *

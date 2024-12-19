@@ -123,7 +123,8 @@ public class StrategyComponentPopulator implements ComponentPopulator {
     }
 
     /**
-     * TODO: #1060 Add documentation
+     * A configurer for the {@link StrategyComponentPopulator}, that allows for the configuration of supported
+     * population strategies.
      *
      * @since 0.6.0
      *

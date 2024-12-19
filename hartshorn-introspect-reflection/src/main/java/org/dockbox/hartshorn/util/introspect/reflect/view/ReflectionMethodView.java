@@ -16,11 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.StringJoiner;
-
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.reporting.Reportable;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -32,11 +27,16 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.lang.invoke.MethodType;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.StringJoiner;
+
 /**
- * TODO: #1059 Add documentation
+ * A view that provides access to the methods of a class. This view is backed by a {@link Method} instance.
  *
- * @param <Parent> ...
- * @param <ReturnType> ...
+ * @param <Parent> The type of the class that the method belongs to
+ * @param <ReturnType> The return type of the method
  *
  * @since 0.4.13
  *

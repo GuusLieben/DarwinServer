@@ -16,10 +16,13 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect;
 
+import org.dockbox.hartshorn.util.introspect.reflect.view.ReflectionConstructorView;
+
 /**
- * TODO: #1059 Add documentation
+ * Represents a constructor call that can be invoked reflectively. This is internally used by {@link
+ * ReflectionConstructorView}s to invoke the constructor.
  *
- * @param <T> ...
+ * @param <T> the type of the constructor
  *
  * @since 0.6.0
  *

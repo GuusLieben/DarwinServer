@@ -19,7 +19,8 @@ package org.dockbox.hartshorn.inject.populate;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * TODO: #1060 Add documentation
+ * Exception to indicate that a component is required, but not present. This typically indicates that another
+ * component has a dependency on the component that is missing.
  *
  * @since 0.4.12
  *

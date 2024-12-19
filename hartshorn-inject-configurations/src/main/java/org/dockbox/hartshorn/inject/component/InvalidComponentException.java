@@ -19,7 +19,8 @@ package org.dockbox.hartshorn.inject.component;
 import org.dockbox.hartshorn.util.ApplicationRuntimeException;
 
 /**
- * TODO: #1060 Add documentation
+ * Exception to indicate a component is invalid. This can be caused by a number of reasons, such as missing annotations,
+ * invalid constructors, or incorrect types.
  *
  * @since 0.4.12
  *

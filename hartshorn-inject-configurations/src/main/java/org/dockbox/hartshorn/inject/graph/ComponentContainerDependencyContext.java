@@ -23,9 +23,10 @@ import org.dockbox.hartshorn.util.introspect.view.ConstructorView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 
 /**
- * TODO: #1060 Add documentation
+ * Represents a dependency context for a {@link ComponentContainer}. This context is used to determine the lifecycle and
+ * other properties of a component that is managed by a container.
  *
- * @param <T> ...
+ * @param <T> the type of the component
  *
  * @since 0.6.0
  *

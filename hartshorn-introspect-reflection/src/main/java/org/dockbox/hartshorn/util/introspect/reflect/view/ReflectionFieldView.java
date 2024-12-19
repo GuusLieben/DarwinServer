@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
-import java.util.List;
-
 import org.dockbox.hartshorn.reporting.DiagnosticsPropertyCollector;
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -35,11 +31,18 @@ import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.util.List;
+
 /**
- * TODO: #1059 Add documentation
+ * A view that provides access to the fields of a class. This view is backed by a {@link Field} instance.
  *
- * @param <Parent> ...
- * @param <FieldType> ...
+ * @see ReflectiveFieldAccess
+ * @see ReflectiveFieldWriter
+ *
+ * @param <Parent> The type of the class that the field belongs to
+ * @param <FieldType> The type of the field
  *
  * @since 0.4.13
  *

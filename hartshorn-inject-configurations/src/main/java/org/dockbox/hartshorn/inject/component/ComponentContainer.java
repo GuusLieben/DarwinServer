@@ -22,9 +22,12 @@ import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import java.util.Comparator;
 
 /**
- * TODO: #1060 Add documentation
+ * Represents a container for a component. The metadata provided by this container is used to register the component with
+ * the IoC container.
  *
- * @param <T> ...
+ * @see ComponentRegistry
+ *
+ * @param <T> the type of the component
  *
  * @since 0.4.1
  *

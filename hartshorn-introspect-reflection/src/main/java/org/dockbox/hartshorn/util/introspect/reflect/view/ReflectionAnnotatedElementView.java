@@ -16,8 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import java.lang.reflect.AnnotatedElement;
-
 import org.dockbox.hartshorn.context.DefaultContext;
 import org.dockbox.hartshorn.util.introspect.ElementAnnotationsIntrospector;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -26,8 +24,11 @@ import org.dockbox.hartshorn.util.introspect.view.AnnotatedElementView;
 import org.dockbox.hartshorn.util.introspect.view.IntrospectorAwareView;
 import org.dockbox.hartshorn.util.introspect.view.wildcard.WildcardElementAnnotationsIntrospector;
 
+import java.lang.reflect.AnnotatedElement;
+
 /**
- * TODO: #1059 Add documentation
+ * A view that provides access to the annotations of an {@link AnnotatedElement}. This view is backed by a
+ * {@link ReflectionElementAnnotationsIntrospector} that is created based on the provided {@link Introspector}.
  *
  * @since 0.4.13
  *

@@ -16,10 +16,6 @@
 
 package org.dockbox.hartshorn.util.introspect.reflect.view;
 
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Executable;
-import java.util.List;
-
 import org.dockbox.hartshorn.util.introspect.ElementModifiersIntrospector;
 import org.dockbox.hartshorn.util.introspect.ExecutableParametersIntrospector;
 import org.dockbox.hartshorn.util.introspect.IllegalIntrospectionException;
@@ -34,10 +30,17 @@ import org.dockbox.hartshorn.util.introspect.view.ExecutableElementView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.dockbox.hartshorn.util.option.Option;
 
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Executable;
+import java.util.List;
+
 /**
- * TODO: #1059 Add documentation
+ * A view that provides access to the constructor of a class. This view is backed by a {@link Executable} instance.
  *
- * @param <Parent> ...
+ * @see ExecutableParametersIntrospector
+ * @see TypeVariablesIntrospector
+ *
+ * @param <Parent> the type of the class that the constructor belongs to
  *
  * @since 0.4.13
  *

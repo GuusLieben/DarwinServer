@@ -16,13 +16,15 @@
 
 package org.dockbox.hartshorn.launchpad.environment;
 
+import org.dockbox.hartshorn.util.introspect.view.TypeView;
+
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 
-import org.dockbox.hartshorn.util.introspect.view.TypeView;
-
 /**
- * TODO: #1060 Add documentation
+ * Resolver to find annotated types in the environment. Depending on the environment and implementation of
+ * this interface, this may also support meta-annotations or annotation hierarchies (typically through the
+ * use of {@link org.dockbox.hartshorn.util.introspect.annotations.Extends} decorators).
  *
  * @since 0.6.0
  *

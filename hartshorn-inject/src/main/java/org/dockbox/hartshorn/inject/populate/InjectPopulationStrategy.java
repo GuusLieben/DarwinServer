@@ -148,7 +148,9 @@ public class InjectPopulationStrategy extends AbstractComponentPopulationStrateg
     }
 
     /**
-     * TODO: #1060 Add documentation
+     * Configurer for the {@link InjectPopulationStrategy}, that allows for the configuration of rules to determine
+     * how additional injection parameter values are resolved, and whether a specific injection point is required
+     * to be resolved for a component to be considered valid.
      *
      * @since 0.6.0
      *
