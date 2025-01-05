@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.dockbox.hartshorn.launchpad.environment.ClasspathResourceLocator;
 import org.dockbox.hartshorn.launchpad.environment.FileSystemProvider;
 import org.dockbox.hartshorn.launchpad.lifecycle.LifecycleObservable;
 import org.dockbox.hartshorn.launchpad.lifecycle.ObservableApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.resources.ResourceLookup;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.proxy.ProxyOrchestrator;
 import org.dockbox.hartshorn.util.introspect.Introspector;
@@ -62,6 +63,7 @@ public class DefaultConfigurationBinderPostProcessor implements HierarchicalBind
             binder.bind(ApplicationEnvironment.class).singleton(applicationEnvironment);
             binder.bind(FileSystemProvider.class).singleton(applicationEnvironment.fileSystem());
             binder.bind(ClasspathResourceLocator.class).singleton(applicationEnvironment.classpath());
+            binder.bind(ResourceLookup.class).singleton(applicationEnvironment.resourceLookup());
             binder.bind(ComponentRegistry.class)
                 .processAfterInitialization(false)
                 .singleton(applicationEnvironment.componentRegistry());

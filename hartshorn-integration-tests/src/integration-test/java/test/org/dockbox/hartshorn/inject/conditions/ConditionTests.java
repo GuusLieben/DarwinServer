@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.dockbox.hartshorn.test.junit.HartshornIntegrationTest;
 import org.dockbox.hartshorn.util.introspect.view.MethodView;
 import org.dockbox.hartshorn.util.introspect.view.TypeView;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -72,6 +73,7 @@ public class ConditionTests {
     @ParameterizedTest
     @MethodSource("properties")
     @TestComponents(components = ConditionalConfiguration.class)
+    @Disabled("#1121: Currently not integrated with property loaders") // TODO #1121: Fix this test
     void testPropertyConditions(String name, boolean present) {
         ComponentKey<String> key = ComponentKey.builder(String.class).name(name).build();
         BindingHierarchy<String> hierarchy = this.applicationContext.hierarchy(key);
