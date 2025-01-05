@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package test.org.dockbox.hartshorn.properties.loader;
 
+import org.dockbox.hartshorn.properties.ConfiguredProperty;
 import org.dockbox.hartshorn.properties.MapPropertyRegistry;
 import org.dockbox.hartshorn.properties.PropertyRegistry;
 import org.dockbox.hartshorn.properties.loader.PropertyRegistryPathLoader;
@@ -43,23 +44,23 @@ public class JacksonPropertyRegistryPathLoaderTests {
         loader.loadRegistry(registry, path);
 
         // Then: Should contain all expected keys
-        List<String> keys = registry.keys();
-        Assertions.assertEquals(12, keys.size());
+        List<ConfiguredProperty> properties = registry.find(property -> true);
+        Assertions.assertEquals(12, properties.size());
 
         // Then: Keys should be ordered
-        Iterator<String> iterator = keys.iterator();
-        Assertions.assertEquals("sample.complex.configuration[0].name", iterator.next());
-        Assertions.assertEquals("sample.complex.configuration[0].value", iterator.next());
-        Assertions.assertEquals("sample.complex.configuration[1].name", iterator.next());
-        Assertions.assertEquals("sample.complex.configuration[1].value", iterator.next());
-        Assertions.assertEquals("sample.complex.configuration[2].name", iterator.next());
-        Assertions.assertEquals("sample.complex.configuration[2].value", iterator.next());
-        Assertions.assertEquals("sample.complex.flat", iterator.next());
-        Assertions.assertEquals("sample.complex.list[0].name", iterator.next());
-        Assertions.assertEquals("sample.complex.list[0].value", iterator.next());
-        Assertions.assertEquals("sample.complex.list[1].name", iterator.next());
-        Assertions.assertEquals("sample.complex.list[1].value", iterator.next());
-        Assertions.assertEquals("sample.complex.values", iterator.next());
+        Iterator<ConfiguredProperty> iterator = properties.iterator();
+        Assertions.assertEquals("sample.complex.configuration[0].name", iterator.next().name());
+        Assertions.assertEquals("sample.complex.configuration[0].value", iterator.next().name());
+        Assertions.assertEquals("sample.complex.configuration[1].name", iterator.next().name());
+        Assertions.assertEquals("sample.complex.configuration[1].value", iterator.next().name());
+        Assertions.assertEquals("sample.complex.configuration[2].name", iterator.next().name());
+        Assertions.assertEquals("sample.complex.configuration[2].value", iterator.next().name());
+        Assertions.assertEquals("sample.complex.flat", iterator.next().name());
+        Assertions.assertEquals("sample.complex.list[0].name", iterator.next().name());
+        Assertions.assertEquals("sample.complex.list[0].value", iterator.next().name());
+        Assertions.assertEquals("sample.complex.list[1].name", iterator.next().name());
+        Assertions.assertEquals("sample.complex.list[1].value", iterator.next().name());
+        Assertions.assertEquals("sample.complex.values", iterator.next().name());
 
         // Then: Property values should be loaded correctly
         registry.value("sample.complex.configuration[0].name")
