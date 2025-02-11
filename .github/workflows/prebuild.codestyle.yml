@@ -14,4 +14,4 @@ jobs:
           java-version: 21
           distribution: temurin
       - name: Check code style
-        run: mvn clean install -DskipTests -P ci -Dcheckstyle.skip=false -Derrorprone.skip=false
+        run: mvn clean verify -DskipTests -P ci -Dexecution.checkstyle.skip=false -Dexecution.errorprone.skip=false

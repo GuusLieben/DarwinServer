@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class ConverterFactoryAdapter implements GenericConverter, ConditionalCon
     public boolean canConvert(Object source, Class<?> targetType) {
         boolean matches = true;
         if (!this.typePair.sourceType().isAssignableFrom(source.getClass())) {
-            matches = false;
+            return false;
         }
         else if (!this.typePair.targetType().isAssignableFrom(targetType)) {
             // If a factory declares a primitive target, it should only match if the target is declared as a generic Object.
@@ -81,12 +81,12 @@ public class ConverterFactoryAdapter implements GenericConverter, ConditionalCon
 
         if (matches) {
             if (this.converterFactory instanceof ConditionalConverter conditionalConverter && !conditionalConverter.canConvert(source, targetType)) {
-                matches = false;
+                return false;
             }
 
             Converter<?, ?> converter = this.converterFactory.create(targetType);
             if (converter instanceof ConditionalConverter conditionalConverter && !conditionalConverter.canConvert(source, targetType)) {
-                matches = false;
+                return false;
             }
         }
         return matches;

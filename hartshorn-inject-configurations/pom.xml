@@ -5,9 +5,9 @@
 
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
-        <artifactId>hartshorn-parent</artifactId>
+        <artifactId>hartshorn-platform-support</artifactId>
         <version>${revision}</version>
-        <relativePath>../hartshorn-assembly/parent/pom.parent.xml</relativePath>
+        <relativePath>../hartshorn-assembly/pom.platform.support.xml</relativePath>
     </parent>
 
     <name>Hartshorn Inject Configurations</name>

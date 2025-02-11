@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,7 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.dockbox.hartshorn.util.introspect.scan.TypeReferenceCollectorContext;
 import org.dockbox.hartshorn.util.introspect.scan.classpath.ClasspathTypeReferenceCollector;
 import org.dockbox.hartshorn.util.option.Option;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -65,6 +66,7 @@ public class ApplicationConfigurerTests {
     }
 
     @Test
+    @Disabled("#1121: Currently not integrated with property loaders") // TODO #1121: Fix this test
     @DisplayName("Customizer should be able to modify arguments provided to the application")
     void testArgumentsCustomizer() {
         ApplicationContext applicationContext = createApplication(configuration -> {

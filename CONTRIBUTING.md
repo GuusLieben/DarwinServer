@@ -114,3 +114,106 @@ SVG attachments should be inlined where possible, to retain as much information 
 image::sample.svg[Sample description,100,opts=inline] // OK, embedded
 image::sample.svg[Sample description,100] // Not OK, image is rasterized
 ```
+
+# Setting up new modules
+
+Hartshorn is made up of multiple modules, each with its own responsibilities. Over time, the build configuration for Hartshorn has grown to support our needs. However, this also comes with a cost: setting up a new module can be a daunting task. This guide aims to simplify the process of setting up a new module.
+
+## Preparing the Maven module
+
+### Setting up the project
+
+As Hartshorn uses Maven, we need to set up a new Maven module. This is done by simply creating a `pom.xml` file in the root of the module directory. You can also generate the project with `mvn archetype:generate` if you have Maven installed locally.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.dockbox.hartshorn</groupId>
+        <artifactId>hartshorn-platform-support</artifactId> <!-- Or alternatives, see below. -->
+        <version>${revision}</version> <!-- Version is managed in the root POM. Individual modules should never deviate from this. -->
+        <relativePath>../hartshorn-assembly/pom.platform.support.xml</relativePath>
+    </parent>
+
+    <name>Hartshorn TheModuleName</name>
+    <description>A very awesome module solving a problem, or providing cool stuff somebody wants or needs</description>
+    <artifactId>hartshorn-module-name</artifactId>
+    <packaging>jar</packaging>
+</project>
+```
+
+### Choosing the right parent module
+
+Hartshorn modules are divided into several parent modules, each adding a different set of support for the module. Below is a list of the available parent modules and their purpose. Each module inherits from the previous one, so you can choose the one that fits your needs.
+
+- `hartshorn-build-support`: The base parent module, providing the necessary setup to build the module.
+- `hartshorn-staging`: A parent module, adding only the necessary setup to publish the module to the Maven Central repository.
+- `hartshorn-platform-updates`: A parent module, adding tooling to update the module's dependencies to the latest versions.
+- `hartshorn-platform-support`: A parent module, adding codestyle and documentation checks to the module.
+
+In most cases, new modules should inherit from `hartshorn-platform-support`. Only inherit from other parents if you have a specific need for them. For example, BOM modules may inherit from `hartshorn-platform-updates`, as there should not be any code in these modules.
+
+### Additional notes
+
+#### Test fixtures
+
+Test fixtures are a common part of Hartshorn modules. These are used to provide test templates for unit tests. If your module requires test fixtures, you should create a `test-fixtures` module. This module should be a separate Maven module, inheriting from the same parent as the main module. This module should be named `hartshorn-module-name-test-fixtures`.
+
+Test fixtures should have sources in the `main` sourceset, rather than the `test` sourceset. This is because test fixtures are not tests themselves, but rather templates for tests. This also means you should promote the required test dependencies to the `compile` scope, rather than the `test` scope.
+
+```xml
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-api</artifactId>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-engine</artifactId>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>org.junit.jupiter</groupId>
+    <artifactId>junit-jupiter-params</artifactId>
+    <scope>compile</scope>
+</dependency>
+<dependency>
+    <groupId>org.assertj</groupId>
+    <artifactId>assertj-core</artifactId>
+    <scope>compile</scope>
+</dependency>
+```
+
+## Registering the module
+
+Once you have set up the Maven module, you need to register it with the Hartshorn build configuration. This needs to be done in various places:
+
+- The `modules` configuration in the root POM file. See [pom.xml](./pom.xml).
+  ```xml
+  <modules>
+    <module>hartshorn-module-name</module>
+  </modules>
+  ```
+- The `dependenyManagement` configuration in the BOM file. See [hartshorn-bom/pom.xml](./hartshorn-bom/pom.xml).
+  ```xml
+  <dependency>
+      <groupId>org.dockbox.hartshorn</groupId>
+      <artifactId>hartshorn-module-name</artifactId>
+      <version>${revision}</version>
+  </dependency>
+  ```
+- The `dependencies` configuration in the assembly POM file. This does not require the version to be defined, as the assembly POM imports the Hartshorn BOM. See [hartshorn-assembly/pom.assembly.xml](./hartshorn-assembly/pom.assembly.xml).
+    ```xml
+    <dependency>
+        <groupId>org.dockbox.hartshorn</groupId>
+        <artifactId>hartshorn-module-name</artifactId>
+    </dependency>
+    ```
+- The `start_paths` configuration in Antora playbooks. See [hartshorn-assembly/antora/playbook-local.yml](./hartshorn-assembly/antora/playbook-local.yml) and [hartshorn-assembly/antora/playbook-release.yml](./hartshorn-assembly/antora/playbook-release.yml).
+  ```yaml
+  start_paths:
+    - hartshorn-module-name/src/main/docs
+  ```

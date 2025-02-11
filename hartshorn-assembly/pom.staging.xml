@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.dockbox.hartshorn</groupId>
+        <artifactId>hartshorn-platform-build</artifactId>
+        <version>${revision}</version>
+        <relativePath>pom.platform.build.xml</relativePath>
+    </parent>
+
+    <artifactId>hartshorn-staging</artifactId>
+    <packaging>pom</packaging>
+    <version>${revision}</version>
+
+    <name>Hartshorn staging configuration</name>
+    <description>Staging configuration for Hartshorn Maven modules</description>
+
+    <url>https://hartshorn.dockbox.org/</url>
+    <inceptionYear>2019</inceptionYear>
+    <organization>
+        <name>Dockbox OSS</name>
+        <url>https://dockbox.org/</url>
+    </organization>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/Dockbox-OSS/Hartshorn</url>
+        <connection>scm:git:git://github.com/Dockbox-OSS/Hartshorn</connection>
+        <developerConnection>scm:git:git://github.com/Dockbox-OSS/Hartshorn</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Guus Lieben</name>
+            <email>guuslieben@dockbox.org</email>
+            <url>https://github.com/GuusLieben</url>
+            <organization>Dockbox OSS</organization>
+            <organizationUrl>https://dockbox.org/</organizationUrl>
+        </developer>
+    </developers>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://www.github.com/Dockbox-OSS/Hartshorn/issues</url>
+    </issueManagement>
+
+    <properties>
+        <!-- Maven plugin versions, in alphabetical order -->
+        <plugin.deploy.version>3.1.2</plugin.deploy.version>
+        <plugin.gpg.version>3.2.4</plugin.gpg.version>
+        <plugin.source.version>3.3.1</plugin.source.version>
+        <plugin.staging.version>1.7.0</plugin.staging.version>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>staging</id>
+            <activation>
+                <property>
+                    <name>staging</name>
+                    <value>true</value>
+                </property>
+            </activation>
+
+            <distributionManagement>
+                <repository>
+                    <id>ossrh</id>
+                    <name>OSSRH Staging</name>
+                    <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                    <layout>default</layout>
+                    <uniqueVersion>false</uniqueVersion>
+                </repository>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+
+            <build>
+                <plugins>
+                    <!-- Distribution staging -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                                <configuration>
+                                    <keyname>${gpg.keyname}</keyname>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>deploy</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <pluginManagement>
+            <!-- Plugin management, in alphabetical order of version property -->
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>${plugin.deploy.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${plugin.gpg.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>${plugin.source.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonatype.plugins</groupId>
+                    <artifactId>nexus-staging-maven-plugin</artifactId>
+                    <version>${plugin.staging.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!-- Deployment configuration -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -142,7 +142,7 @@ public record IntegrationTestApplicationFactoryCustomizer(
         List<T> result = new ArrayList<>();
         for(Class<?> processor : processors) {
             if(type.isAssignableFrom(processor)) {
-                Object instance = OBJECT_FACTORY.create(type);
+                Object instance = OBJECT_FACTORY.create(processor);
                 result.add(type.cast(instance));
             }
         }

@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.dockbox.hartshorn</groupId>
+        <artifactId>hartshorn-platform-updates</artifactId>
+        <version>${revision}</version>
+        <relativePath>pom.platform.updates.xml</relativePath>
+    </parent>
+
+    <artifactId>hartshorn-platform-support</artifactId>
+    <packaging>pom</packaging>
+    <version>${revision}</version>
+
+    <name>Hartshorn Platform Support</name>
+    <description>Common parent POM for all public facing Hartshorn modules</description>
+
+    <properties>
+        <!-- Shorthands for project paths -->
+        <path.assembly>${maven.multiModuleProjectDirectory}/hartshorn-assembly</path.assembly>
+
+        <!--
+        Feature toggles for CI, most default to opt-out behavior.
+        Use the 'ci' profile to disable by default, making this opt-in instead.
+        -->
+        <execution.checkstyle.skip>false</execution.checkstyle.skip>
+        <execution.javadoc.skip>false</execution.javadoc.skip>
+        <execution.owasp.skip>false</execution.owasp.skip>
+        <execution.jacoco.skip>false</execution.jacoco.skip>
+        <execution.license.check.skip>false</execution.license.check.skip>
+        <execution.license.format.skip>false</execution.license.format.skip>
+        <execution.errorprone.skip>false</execution.errorprone.skip>
+        <execution.coverage.skip>false</execution.coverage.skip>
+        <execution.updates.skip>true</execution.updates.skip> <!-- Only for manual execution -->
+
+        <!-- Maven plugin versions, in alphabetical order -->
+        <plugin.checkstyle.version>3.6.0</plugin.checkstyle.version>
+        <plugin.versions.version>2.18.0</plugin.versions.version>
+        <plugin.jacoco.version>0.8.12</plugin.jacoco.version>
+        <plugin.license.version>4.6</plugin.license.version>
+        <plugin.owasp.version>11.1.1</plugin.owasp.version>
+        <plugin.errorprone.version>2.28.0</plugin.errorprone.version>
+
+        <!-- Maven plugin dependency versions, in alphabetical order -->
+        <checkstyle.version>10.21.0</checkstyle.version>
+
+        <argLine.errorprone>
+            -Xplugin:ErrorProne \
+
+            <!-- # Disabled checks -->
+            <!--
+            Indicates a functional interfaces extends another functional interface, while implementing the original
+            with a default function. This risks the wrong method being called. Disabled as this is expected to be an
+            intentional use of default methods.
+            -->
+            -Xep:FunctionalInterfaceMethodChanged:OFF \
+            <!--
+            Indicates #equals is implemented by comparing #getClass instead of using instanceof. This is a common
+            pattern and is not a problem.
+            -->
+            -Xep:EqualsGetClass:OFF \
+            <!--
+            Indicates that an Optional is used as a potentially nullable type. While this would indicate issues in most
+            codebases, in our case this is allowed for compatibility of converters and Option wrapping.
+            -->
+            -Xep:NullableOptional:OFF \
+            <!--
+            Indicates that an obsolete JDK class is used. This is disabled as it's overly sensitive and doesn't provide
+            much value in our case.
+            -->
+            -Xep:JdkObsolete:OFF \
+            <!--
+            Indicates that a deprecated method looks inlineable. This is disabled as we prefer not to use ErrorProne
+            annotations inside the codebase (beyond to suppress warnings).
+            -->
+            -Xep:InlineMeSuggester:OFF \
+            <!--
+            Indicates that a @see tag is missing in Javadoc. This is disabled as it's overly sensitive and doesn't
+            provide much value in our case.
+            -->
+            -Xep:MissingSummary:OFF \
+            <!--
+            Indicates that a field of an enum is not entirely immutable. This is disabled as we use enums for complex
+            definitions, which may require mutable fields (even if they are effectively immutable).
+            -->
+            -Xep:ImmutableEnumChecker:OFF \
+            <!--
+            Indicates that the use of Enum#ordinal is discouraged. This is as it's overly sensitive and doesn't provide
+            much value in our case.
+            -->
+            -Xep:EnumOrdinal:OFF \
+            <!--
+            Indicates that String#split may have unexpected behavior. This is disabled as we use this method in a
+            controlled manner.
+            -->
+            -Xep:StringSplitter:OFF \
+            <!--
+            Indicates that a method is unused. As we often expose methods for third-party use, this is disabled.
+            -->
+            -Xep:UnusedMethod:OFF \
+
+
+            <!-- # Promoted checks (to ERROR) -->
+            <!--
+            Indicates that a non-API type is used in a public API (e.g. ArrayList instead of List). This is promoted to ERROR
+            as it's a common mistake that can lead to API instability.
+            -->
+            -Xep:NonApiType:ERROR \
+            <!--
+            Indicates that a method is missing an @Override annotation. This is promoted to ERROR as it's a common mistake
+            that can reduce code readability.
+            -->
+            -Xep:MissingOverride:ERROR \
+            <!--
+            Indicates that an imported nested class or static method/field has a commonly-used name (e.g. Builder instead of
+            ComponentKey.Builder). This is promoted to ERROR as it's a common mistake that can lead to confusion.
+            -->
+            -Xep:BadImport:ERROR \
+            <!--
+            Indicates that a method is opened with /** but isn't a Javadoc comment. This is promoted to ERROR to prevent dangling
+            Javadoc comments.
+            -->
+            -Xep:NotJavadoc:ERROR \
+            <!--
+            Indicates that an exception was caught and only used to print the stack trace. This is promoted to ERROR as it's
+            a common mistake that can lead to silent failures.
+            -->
+            -Xep:CatchAndPrintStackTrace:ERROR \
+            <!--
+            Indicates that an empty catch block is used. This is promoted to ERROR as it's a common mistake that can lead to
+            silent failures.
+            -->
+            -Xep:EmptyCatch:ERROR \
+            <!--
+            Indicates that a class initialization deadlock is possible. This is promoted to ERROR as this issue can have severe
+            consequences.
+            -->
+            -Xep:ClassInitializationDeadlock:ERROR \
+            <!--
+            Indicates that a class is placed in the default package. This is promoted to ERROR as classes should always be in
+            a named package.
+            -->
+            -Xep:DefaultPackage:ERROR \
+            <!--
+            Indicates that #equals is implemented using #hashCode. This is promoted to ERROR as this can be unreliable, and we'd
+            rather have a consistent implementation.
+            -->
+            -Xep:EqualsUsingHashCode:ERROR \
+            <!--
+            Indicates that #finalize is implemented. This is promoted to ERROR as this method is deprecated and should not be used.
+            -->
+            -Xep:Finalize:ERROR \
+            <!--
+            Indicates that not all enum cases are handled in a switch statement. This is promoted to ERROR as it's a common mistake
+            as enum constants may be added over time.
+            -->
+            -Xep:MissingCasesInEnumSwitch:ERROR \
+            <!--
+            Indicates that a type name shadows another type name. This is promoted to ERROR as this can be confusing and lead to
+            unintended behavior.
+            -->
+            -Xep:SameNameButDifferent:ERROR \
+            <!--
+            Indicates that #toString returns null. This is promoted to ERROR as this can lead to NPEs.
+            -->
+            -Xep:ToStringReturnsNull:ERROR \
+            <!--
+            Indicates that a type is not guaranteed to implement a useful #equals method (e.g. for collections). This is promoted
+            to ERROR as this can lead to unexpected behavior.
+            -->
+            -Xep:UndefinedEquals:ERROR \
+            <!--
+            Indicates that a lambda is returned from a helper method, or stored in a field. This is promoted to ERROR as such cases
+            should always be either inlined or converted to a method reference.
+            -->
+            -Xep:UnnecessaryLambda:ERROR \
+            <!--
+            Indicates that a method reference is used where the variable itself could be used (e.g. filter(predicate::test) instead of
+            filter(predicate)). This is promoted to ERROR as it's a common mistake that can lead to confusion.
+            -->
+            -Xep:UnnecessaryMethodReference:ERROR \
+            <!--
+            Indicates that a type parameter is unused. This is promoted to ERROR as it's a common mistake that can lead to confusion
+            and overly complex code.
+            -->
+            -Xep:UnusedTypeParameter:ERROR \
+        </argLine.errorprone>
+    </properties>
+
+    <profiles>
+        <profile>
+            <!-- CI profile, so we can opt-in to goals, instead of having to opt-out -->
+            <id>ci</id>
+            <properties>
+                <execution.checkstyle.skip>true</execution.checkstyle.skip>
+                <execution.javadoc.skip>true</execution.javadoc.skip>
+                <execution.owasp.skip>true</execution.owasp.skip>
+                <execution.jacoco.skip>true</execution.jacoco.skip>
+                <execution.license.check.skip>true</execution.license.check.skip>
+                <execution.license.format.skip>true</execution.license.format.skip>
+                <execution.errorprone.skip>true</execution.errorprone.skip>
+                <execution.coverage.skip>true</execution.coverage.skip>
+                <execution.updates.skip>true</execution.updates.skip>
+            </properties>
+        </profile>
+    </profiles>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.dockbox.hartshorn</groupId>
+                <artifactId>hartshorn-bom</artifactId>
+                <version>${revision}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <!--
+        Only require qualifiers to be present, we don't use CF to actually run analysis on the code
+        and we don't want to force users to use CF.
+        -->
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Language support -->
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib</artifactId>
+            <version>${kotlin.version}</version>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <!-- Plugin management, in alphabetical order of version property -->
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${plugin.checkstyle.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${plugin.jacoco.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${plugin.license.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>${plugin.owasp.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <!-- License headers -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <configuration>
+                    <headerDefinitions>
+                        <headerDefinition>${path.assembly}/licenses/JavaBlockStyleHeader.xml</headerDefinition>
+                    </headerDefinitions>
+                    <licenseSets>
+                        <licenseSet>
+                            <header>${path.assembly}/licenses/APACHE-2.txt</header>
+                            <useDefaultExcludes>true</useDefaultExcludes>
+                            <includes>
+                                <include>**/*.java</include>
+                                <include>**/*.kt</include>
+                                <include>**/*.groovy</include>
+                                <include>**/*.scala</include>
+                            </includes>
+                        </licenseSet>
+                    </licenseSets>
+                    <mapping>
+                        <java>JavaBlockStyleHeader</java>
+                    </mapping>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.mycila</groupId>
+                        <artifactId>license-maven-plugin-git</artifactId>
+                        <version>${plugin.license.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>license-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${execution.license.check.skip}</skip>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>license-format</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${execution.license.format.skip}</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- OWASP Dependency check, to ensure no vulnerabilities are present in the dependencies -->
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <configuration>
+                    <skip>${execution.owasp.skip}</skip>
+                    <failBuildOnCVSS>1</failBuildOnCVSS>
+                    <suppressionFiles>
+                        <suppressionFile>${path.assembly}/dependency-check/dependency-check-suppressions.xml</suppressionFile>
+                    </suppressionFiles>
+                    <reportOutputDirectory>${project.build.directory}/dependency-check-report</reportOutputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>dependency-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Code style -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <skip>${execution.checkstyle.skip}</skip>
+                    <configLocation>src/checkstyle/checkstyle.xml</configLocation>
+                    <consoleOutput>true</consoleOutput>
+                    <failsOnError>true</failsOnError>
+                    <failOnViolation>true</failOnViolation>
+                    <violationSeverity>error</violationSeverity>
+                    <linkXRef>false</linkXRef>
+                    <includeTestSourceDirectory>false</includeTestSourceDirectory>
+                    <configLocation>${path.assembly}/checkstyle/checkstyle.xml</configLocation>
+                    <suppressionsLocation>${path.assembly}/checkstyle/suppressions.xml</suppressionsLocation>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>${checkstyle.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>checkstyle-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Standard build configurations -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>${java.version}</release>
+                    <skip>${execution.errorprone.skip}</skip>
+                    <fork>false</fork>
+                    <encoding>UTF-8</encoding>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                        <arg>-XDcompilePolicy=simple</arg>
+                        <arg>${argLine.errorprone}</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <!-- Code quality -->
+                        <path>
+                            <groupId>com.google.errorprone</groupId>
+                            <artifactId>error_prone_core</artifactId>
+                            <version>${plugin.errorprone.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+
+            <!-- Testing -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <configuration>
+                    <skip>${execution.jacoco.skip}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>check-coverage</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${execution.coverage.skip}</skip>
+                            <rules>
+                                <rule>
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.8</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- JavaDoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>${execution.javadoc.skip}</skip>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>javadoc</id>
+                        <goals>
+                            <goal>javadoc</goal>
+                            <goal>jar</goal>
+                        </goals>
+                        <phase>install</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

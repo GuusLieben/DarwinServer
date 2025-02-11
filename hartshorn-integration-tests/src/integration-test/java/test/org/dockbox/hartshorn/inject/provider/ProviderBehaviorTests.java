@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
 import org.dockbox.hartshorn.inject.annotations.Inject;
-import org.dockbox.hartshorn.inject.graph.support.ComponentInitializationException;
 import org.dockbox.hartshorn.launchpad.ApplicationContext;
 import org.dockbox.hartshorn.test.annotations.TestBinding;
 import org.dockbox.hartshorn.test.annotations.TestComponents;
@@ -132,7 +131,6 @@ public class ProviderBehaviorTests {
         Assertions.assertEquals("MetaAnnotatedHartshorn", provided.name());
     }
 
-
     @Test
     @TestComponents(
             components = PopulatedType.class,
@@ -146,7 +144,7 @@ public class ProviderBehaviorTests {
 
     @Test
     void testFailureInComponentConstructorYieldsInitializationException() {
-        ComponentInitializationException exception = Assertions.assertThrows(ComponentInitializationException.class, () -> this.applicationContext.get(
+        ComponentResolutionException exception = Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(
                 ErrorInConstructorObject.class));
         Throwable cause = exception.getCause();
         Assertions.assertNotNull(cause);
@@ -158,7 +156,7 @@ public class ProviderBehaviorTests {
 
     @Test
     void testFailingConstructorIsRethrown() {
-        ComponentInitializationException exception = Assertions.assertThrows(ComponentInitializationException.class, () -> this.applicationContext.get(
+        ComponentResolutionException exception = Assertions.assertThrows(ComponentResolutionException.class, () -> this.applicationContext.get(
                 TypeWithFailingConstructor.class));
         Assertions.assertTrue(exception.getCause() instanceof ApplicationException);
 

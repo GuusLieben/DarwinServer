@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Created-By: Hartshorn manual operation (test only manifest)
+Build-Jdk-Spec: 21
+Specification-Title: Hartshorn Launchpad (test)
+Specification-Version: 0.6
+Specification-Vendor: Dockbox OSS
+Implementation-Title: Hartshorn Launchpad (test)
+Implementation-Version: 0.6.1
+Implementation-Vendor: Dockbox OSS

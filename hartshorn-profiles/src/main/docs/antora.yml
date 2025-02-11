@@ -1,0 +1,4 @@
+name: profiles
+title: Hartshorn Profiles
+nav:
+  - modules/ROOT/nav.adoc

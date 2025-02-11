@@ -34,6 +34,8 @@ content:
         - hartshorn-launchpad/src/main/docs
         - hartshorn-testsuite/src/main/docs
         - hartshorn-util/src/main/docs
+        - hartshorn-properties/src/main/docs
+        - hartshorn-profiles/src/main/docs
         - hartshorn-spi/src/main/docs
         - hartshorn-proxy/src/main/docs
         - hartshorn-proxy-javassist/src/main/docs

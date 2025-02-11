@@ -5,5 +5,8 @@
         "https://checkstyle.org/dtds/suppressions_1_2.dtd">
 
 <suppressions>
-    <!-- No active suppressions -->
+
+    <!-- Not required for test fixtures to provide Javadocs (although this is still encouraged where relevant) -->
+    <suppress checks="MissingJavadocType"
+              files=".+test-fixtures[\\/].*.java"/>
 </suppressions>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019-2024 the original author or authors.
+ * Copyright 2019-2025 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.dockbox.hartshorn.util.introspect.convert.support;
 
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.dockbox.hartshorn.util.TypeUtils;
+import org.dockbox.hartshorn.util.introspect.convert.ConditionalConverter;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProvider;
 import org.dockbox.hartshorn.util.introspect.convert.DefaultValueProviderFactory;
 
@@ -30,7 +31,7 @@ import java.lang.reflect.Array;
  *
  * @author Guus Lieben
  */
-public class ArrayDefaultValueProviderFactory implements DefaultValueProviderFactory<Object> {
+public class ArrayDefaultValueProviderFactory implements DefaultValueProviderFactory<Object>, ConditionalConverter {
 
     @Override
     public <O> DefaultValueProvider<O> create(Class<O> targetType) {
@@ -40,6 +41,11 @@ public class ArrayDefaultValueProviderFactory implements DefaultValueProviderFac
         Class<?> elementType = targetType.getComponentType();
         ArrayDefaultValueProvider<?> provider = new ArrayDefaultValueProvider<>(elementType);
         return TypeUtils.unchecked(provider, DefaultValueProvider.class);
+    }
+
+    @Override
+    public boolean canConvert(Object source, Class<?> targetType) {
+        return targetType.isArray();
     }
 
     /**

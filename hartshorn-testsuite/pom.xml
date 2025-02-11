@@ -5,9 +5,9 @@
 
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
-        <artifactId>hartshorn-parent</artifactId>
+        <artifactId>hartshorn-platform-support</artifactId>
         <version>${revision}</version>
-        <relativePath>../hartshorn-assembly/parent/pom.parent.xml</relativePath>
+        <relativePath>../hartshorn-assembly/pom.platform.support.xml</relativePath>
     </parent>
 
     <name>Hartshorn Test Suite</name>
@@ -30,11 +30,17 @@
             <artifactId>hartshorn-proxy-javassist</artifactId>
         </dependency>
 
-        <!-- JUnit -->
+        <!-- Testing frameworks -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>compile</scope>
+            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

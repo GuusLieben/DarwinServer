@@ -1,0 +1,5 @@
+= Hartshorn Properties
+Guus Lieben
+:description: The Hartshorn Properties module provides a simple way to handle configuration properties in your application.
+
+To be written

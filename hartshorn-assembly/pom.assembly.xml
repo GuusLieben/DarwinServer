@@ -5,22 +5,49 @@
 
     <parent>
         <groupId>org.dockbox.hartshorn</groupId>
-        <artifactId>hartshorn</artifactId>
+        <artifactId>hartshorn-platform-build</artifactId>
         <version>${revision}</version>
-        <relativePath>../pom.xml</relativePath>
+        <relativePath>pom.platform.build.xml</relativePath>
     </parent>
 
     <name>Hartshorn Assembly</name>
-    <description>Assembly project for Hartshorn</description>
+    <description>Assembly project for Hartshorn, used to aggregate project artifacts.</description>
 
     <artifactId>hartshorn-assembly</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
     <properties>
+        <path.assembly>${maven.multiModuleProjectDirectory}/hartshorn-assembly</path.assembly>
+
+        <!-- Antora playbook for documentation build. Set to playbook-local.yml for local builds -->
+        <antora.playbook>playbook-release.yml</antora.playbook>
+
         <maven.deploy.skip>true</maven.deploy.skip>
-        <jacoco.skip>false</jacoco.skip>
+        <execution.antora.skip>false</execution.antora.skip>
+        <execution.jacoco.skip>false</execution.jacoco.skip>
+        <execution.javadoc.skip>false</execution.javadoc.skip>
+
+        <plugin.antora.version>1.0.0-alpha.4</plugin.antora.version>
+        <plugin.jacoco.version>0.8.12</plugin.jacoco.version>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>ci</id>
+            <properties>
+                <execution.antora.skip>true</execution.antora.skip>
+                <execution.jacoco.skip>true</execution.jacoco.skip>
+                <execution.javadoc.skip>true</execution.javadoc.skip>
+            </properties>
+        </profile>
+        <profile>
+            <id>local</id>
+            <properties>
+                <antora.playbook>playbook-local.yml</antora.playbook>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencyManagement>
         <dependencies>
@@ -35,6 +62,7 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- Hartshorn modules -->
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-inject</artifactId>
@@ -61,11 +89,19 @@
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
+            <artifactId>hartshorn-introspect-test-fixtures</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-introspect-reflection</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-proxy</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dockbox.hartshorn</groupId>
+            <artifactId>hartshorn-proxy-test-fixtures</artifactId>
         </dependency>
         <dependency>
             <groupId>org.dockbox.hartshorn</groupId>
@@ -91,13 +127,124 @@
             <groupId>org.dockbox.hartshorn</groupId>
             <artifactId>hartshorn-testsuite</artifactId>
         </dependency>
+
+        <!-- Third-party dependencies -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-properties</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-toml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.checkerframework</groupId>
+            <artifactId>checker-qual</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!-- Antora documentation -->
+            <plugin>
+                <groupId>org.antora</groupId>
+                <artifactId>antora-maven-plugin</artifactId>
+                <version>${plugin.antora.version}</version>
+                <configuration>
+                    <skip>${execution.antora.skip}</skip>
+                    <playbookFile>${path.assembly}/antora/${antora.playbook}</playbookFile>
+                    <packages>
+                        <package>@antora/lunr-extension</package>
+                        <package>@asciidoctor/tabs</package>
+                        <package>asciidoctor-interdoc-reftext</package>
+                    </packages>
+                    <!-- TODO: Change output location? -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>antora-site</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>antora</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- JavaDoc documentation -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <skip>${execution.javadoc.skip}</skip>
+                    <includeDependencySources>true</includeDependencySources>
+                    <dependencySourceIncludes>
+                        <!-- Only build for Hartshorn sources. Third-party dependencies should not be included. -->
+                        <dependencySourceInclude>org.dockbox.hartshorn:*</dependencySourceInclude>
+                    </dependencySourceIncludes>
+                    <dependencySourceExcludes>
+                        <!-- Skip 'test' sources -->
+                        <dependencySourceExclude>org.dockbox.hartshorn:hartshorn-integration-tests</dependencySourceExclude>
+                        <dependencySourceExclude>org.dockbox.hartshorn:hartshorn-introspect-test-fixtures</dependencySourceExclude>
+                        <dependencySourceExclude>org.dockbox.hartshorn:hartshorn-proxy-test-fixtures</dependencySourceExclude>
+                    </dependencySourceExcludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>javadoc-aggregate</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Jacoco test coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${plugin.jacoco.version}</version>
                 <executions>
                     <execution>
                         <id>report-aggregate</id>
