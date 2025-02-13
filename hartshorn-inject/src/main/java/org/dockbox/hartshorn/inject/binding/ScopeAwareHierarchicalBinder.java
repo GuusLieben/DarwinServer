@@ -39,7 +39,7 @@ import org.dockbox.hartshorn.util.option.Option;
  *
  * @author Guus Lieben
  */
-public class ScopeAwareHierarchicalBinder implements HierarchicalBinder, NestedHierarchyLookup {
+public class ScopeAwareHierarchicalBinder implements HierarchicalAliasCapableBinder, NestedHierarchyLookup {
 
     private final InjectionCapableApplication application;
     private final SingletonCache singletonCache;
@@ -70,7 +70,7 @@ public class ScopeAwareHierarchicalBinder implements HierarchicalBinder, NestedH
     }
 
     @Override
-    public <C> BindingFunction<C> bind(Class<C> type) {
+    public <C> AliasBindingFunction<C> bind(Class<C> type) {
         // Strict, so new hierarchies are created if needed, rather than using loose lookup
         ComponentKey<C> componentKey = ComponentKey.builder(type)
                 .strict(true)
@@ -84,7 +84,7 @@ public class ScopeAwareHierarchicalBinder implements HierarchicalBinder, NestedH
     }
 
     @Override
-    public <C> BindingFunction<C> bind(ComponentKey<C> key) {
+    public <C> AliasBindingFunction<C> bind(ComponentKey<C> key) {
         Scope componentScope = key.scope().orNull();
         if (componentScope == null) {
             componentScope = this.applicationScope();

@@ -16,10 +16,14 @@
 
 package org.dockbox.hartshorn.launchpad;
 
+import java.util.Set;
+import java.util.function.BiConsumer;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
+import org.dockbox.hartshorn.inject.binding.AliasBindingFunction;
+import org.dockbox.hartshorn.inject.binding.AliasCapableBinder;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
@@ -48,9 +52,6 @@ import org.dockbox.hartshorn.util.collections.ArrayListMultiMap;
 import org.dockbox.hartshorn.util.collections.MultiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Set;
-import java.util.function.BiConsumer;
 
 /**
  * A {@link ApplicationContext} implementation that delegates to a {@link PostProcessingComponentProvider}. This
@@ -169,10 +170,15 @@ public abstract class DelegatingApplicationContext
     }
 
     @Override
-    public <C> BindingFunction<C> bind(ComponentKey<C> key) {
-        if (this.componentProvider instanceof Binder binder) {
+    public <C> AliasBindingFunction<C> bind(ComponentKey<C> key) {
+        if (this.componentProvider instanceof AliasCapableBinder binder) {
+            AliasBindingFunction<C> function = binder.bind(key);
+            return new DelegatingApplicationAliasBindingFunction<>(this, function);
+        }
+        else if (this.componentProvider instanceof Binder binder) {
             BindingFunction<C> function = binder.bind(key);
-            return new DelegatingApplicationBindingFunction<>(this, function);
+            BindingFunction<C> delegate = new DelegatingApplicationBindingFunction<>(this, function);
+            return new NonAliasBindingFunctionAdapter<>(delegate);
         }
         throw new UnsupportedOperationException("This application does not support binding hierarchies");
     }

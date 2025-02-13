@@ -16,13 +16,13 @@
 
 package org.dockbox.hartshorn.launchpad;
 
-import org.dockbox.hartshorn.inject.scope.ScopeKey;
-import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
-import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.IllegalScopeException;
 import org.dockbox.hartshorn.inject.binding.Binder;
 import org.dockbox.hartshorn.inject.binding.BindingFunction;
 import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
-import org.dockbox.hartshorn.inject.IllegalScopeException;
+import org.dockbox.hartshorn.inject.provider.InstantiationStrategy;
+import org.dockbox.hartshorn.inject.scope.ScopeKey;
+import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.function.CheckedSupplier;
 
@@ -49,6 +49,10 @@ public class DelegatingApplicationBindingFunction<T> implements BindingFunction<
     public DelegatingApplicationBindingFunction(ApplicationContext applicationContext, BindingFunction<T> delegate) {
         this.applicationContext = applicationContext;
         this.delegate = delegate;
+    }
+
+    protected BindingFunction<T> delegate() {
+        return this.delegate;
     }
 
     @Override

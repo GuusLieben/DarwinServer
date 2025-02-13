@@ -19,6 +19,7 @@ package org.dockbox.hartshorn.inject.binding;
 import org.checkerframework.checker.nullness.qual.NonNull;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.IllegalScopeException;
+import org.dockbox.hartshorn.inject.QualifierKey;
 import org.dockbox.hartshorn.inject.collection.CollectionBindingHierarchy;
 import org.dockbox.hartshorn.inject.collection.CollectorBindingFunction;
 import org.dockbox.hartshorn.inject.collection.ComponentCollection;
@@ -49,7 +50,7 @@ import org.dockbox.hartshorn.util.function.CheckedSupplier;
  *
  * @author Guus Lieben
  */
-public class HierarchyBindingFunction<T> implements BindingFunction<T> {
+public class HierarchyBindingFunction<T> implements AliasBindingFunction<T> {
 
     private final BindingHierarchy<T> hierarchy;
     private final HierarchicalBinder binder;
@@ -94,7 +95,22 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public BindingFunction<T> installTo(ScopeKey scopeKey) throws IllegalScopeException {
+    public AliasBindingFunction<T> alias(Class<? super T> aliasType) {
+        throw new UnsupportedOperationException("Not yet implemented"); // TODO: Implement
+    }
+
+    @Override
+    public AliasBindingFunction<T> alias(ComponentKey<? super T> aliasKey) {
+        throw new UnsupportedOperationException("Not yet implemented"); // TODO: Implement
+    }
+
+    @Override
+    public AliasBindingFunction<T> alias(QualifierKey<T> aliasQualifier) {
+        throw new UnsupportedOperationException("Not yet implemented"); // TODO: Implement
+    }
+
+    @Override
+    public AliasBindingFunction<T> installTo(ScopeKey scopeKey) throws IllegalScopeException {
         boolean expandingApplicationScope = this.moduleContext.isApplicationScope(this.scopeKey)
                 || this.moduleContext.isApplicationScope(this.scope.installableScopeType());
 
@@ -110,13 +126,13 @@ public class HierarchyBindingFunction<T> implements BindingFunction<T> {
     }
 
     @Override
-    public BindingFunction<T> priority(int priority) {
+    public AliasBindingFunction<T> priority(int priority) {
         this.priority = priority;
         return this;
     }
 
     @Override
-    public BindingFunction<T> processAfterInitialization(boolean processAfterInitialization) {
+    public AliasBindingFunction<T> processAfterInitialization(boolean processAfterInitialization) {
         this.processAfterInitialization = processAfterInitialization;
         return this;
     }

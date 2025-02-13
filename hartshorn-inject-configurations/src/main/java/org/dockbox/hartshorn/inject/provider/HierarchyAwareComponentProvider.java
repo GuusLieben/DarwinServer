@@ -17,20 +17,19 @@
 package org.dockbox.hartshorn.inject.provider;
 
 import java.util.List;
-
-import org.dockbox.hartshorn.inject.InjectionCapableApplication;
-import org.dockbox.hartshorn.inject.binding.NestedHierarchyLookup;
-import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
-import org.dockbox.hartshorn.inject.binding.ScopeAwareHierarchicalBinder;
-import org.dockbox.hartshorn.inject.processing.ComponentProviderPostProcessor;
-import org.dockbox.hartshorn.inject.processing.ComponentStoreCallback;
-import org.dockbox.hartshorn.inject.processing.PostConstructingComponentPostProcessor;
-import org.dockbox.hartshorn.inject.processing.SimpleComponentProviderPostProcessor;
-import org.dockbox.hartshorn.inject.processing.CompositeComponentPostProcessor;
 import org.dockbox.hartshorn.inject.ComponentKey;
 import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ComponentResolutionException;
+import org.dockbox.hartshorn.inject.InjectionCapableApplication;
 import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
+import org.dockbox.hartshorn.inject.binding.HierarchicalAliasCapableBinder;
+import org.dockbox.hartshorn.inject.binding.NestedHierarchyLookup;
+import org.dockbox.hartshorn.inject.binding.ScopeAwareHierarchicalBinder;
+import org.dockbox.hartshorn.inject.processing.ComponentProviderPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ComponentStoreCallback;
+import org.dockbox.hartshorn.inject.processing.CompositeComponentPostProcessor;
+import org.dockbox.hartshorn.inject.processing.PostConstructingComponentPostProcessor;
+import org.dockbox.hartshorn.inject.processing.SimpleComponentProviderPostProcessor;
 import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
 import org.dockbox.hartshorn.inject.provider.singleton.SingletonCache;
 import org.dockbox.hartshorn.inject.provider.strategy.ComponentProcessorComponentProviderStrategy;
@@ -64,19 +63,19 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
  * @author Guus Lieben
  */
 public class HierarchyAwareComponentProvider extends StrategyChainComponentProvider
-        implements HierarchicalBinderAwareComponentProvider, SingletonCacheComponentProvider, NestedHierarchyLookup {
+        implements HierarchicalAliasBinderAwareComponentProvider, SingletonCacheComponentProvider, NestedHierarchyLookup {
 
     private final ComponentProviderPostProcessor processor;
-    private final HierarchicalBinder binder;
+    private final HierarchicalAliasCapableBinder binder;
     private final Scope scope;
     private final SingletonCache singletonCache;
 
     public HierarchyAwareComponentProvider(
-            ComponentRegistryAwareProviderOrchestrator orchestrator,
-            ComponentPostConstructor postConstructor,
-            InjectionCapableApplication application,
-            SingletonCache singletonCache,
-            Scope scope
+        ComponentRegistryAwareProviderOrchestrator orchestrator,
+        ComponentPostConstructor postConstructor,
+        InjectionCapableApplication application,
+        SingletonCache singletonCache,
+        Scope scope
     ) {
         this(
                 application,
@@ -88,11 +87,11 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
     }
 
     public HierarchyAwareComponentProvider(
-            InjectionCapableApplication application,
-            SingletonCache singletonCache,
-            HierarchicalBinder binder,
-            ComponentProviderPostProcessor postProcessor,
-            Scope scope
+        InjectionCapableApplication application,
+        SingletonCache singletonCache,
+        HierarchicalAliasCapableBinder binder,
+        ComponentProviderPostProcessor postProcessor,
+        Scope scope
     ) {
         super(application);
 
@@ -136,7 +135,7 @@ public class HierarchyAwareComponentProvider extends StrategyChainComponentProvi
     }
 
     @Override
-    public HierarchicalBinder binder() {
+    public HierarchicalAliasCapableBinder binder() {
         return this.binder;
     }
 

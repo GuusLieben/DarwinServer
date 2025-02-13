@@ -16,12 +16,12 @@
 
 package org.dockbox.hartshorn.launchpad;
 
-import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
-import org.dockbox.hartshorn.launchpad.launch.ApplicationBuilder;
 import org.dockbox.hartshorn.inject.ExceptionHandler;
+import org.dockbox.hartshorn.inject.binding.HierarchicalAliasCapableBinder;
 import org.dockbox.hartshorn.inject.provider.HierarchicalComponentProvider;
 import org.dockbox.hartshorn.launchpad.context.ApplicationContextCarrier;
 import org.dockbox.hartshorn.launchpad.environment.ApplicationEnvironment;
+import org.dockbox.hartshorn.launchpad.launch.ApplicationBuilder;
 import org.dockbox.hartshorn.util.ApplicationException;
 
 /**
@@ -43,10 +43,10 @@ import org.dockbox.hartshorn.util.ApplicationException;
  */
 public interface ApplicationContext extends
     ConfigurableActivationInjectionCapableApplication,
-        HierarchicalComponentProvider,
-        HierarchicalBinder,
-        ExceptionHandler,
-        AutoCloseable {
+    HierarchicalComponentProvider,
+    HierarchicalAliasCapableBinder,
+    ExceptionHandler,
+    AutoCloseable {
 
     /**
      * Gets the active {@link ApplicationEnvironment} for the application.

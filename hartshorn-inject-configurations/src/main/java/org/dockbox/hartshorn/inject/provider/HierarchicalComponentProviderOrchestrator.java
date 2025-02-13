@@ -20,31 +20,31 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import java.util.function.Function;
 import org.checkerframework.checker.nullness.qual.NonNull;
+import org.dockbox.hartshorn.inject.ComponentKey;
+import org.dockbox.hartshorn.inject.ComponentRequestContext;
 import org.dockbox.hartshorn.inject.ContextKey;
+import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
 import org.dockbox.hartshorn.inject.InjectionCapableApplication;
+import org.dockbox.hartshorn.inject.binding.AliasBindingFunction;
+import org.dockbox.hartshorn.inject.binding.AliasCapableBinder;
+import org.dockbox.hartshorn.inject.binding.Binder;
+import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
 import org.dockbox.hartshorn.inject.binding.HierarchicalBinder;
+import org.dockbox.hartshorn.inject.component.ComponentRegistry;
 import org.dockbox.hartshorn.inject.processing.ComponentProcessorRegistry;
 import org.dockbox.hartshorn.inject.processing.CompositeHierarchicalBinderPostProcessor;
+import org.dockbox.hartshorn.inject.processing.ConcurrentHierarchicalBinderProcessorRegistry;
 import org.dockbox.hartshorn.inject.processing.HierarchicalBinderPostProcessor;
 import org.dockbox.hartshorn.inject.processing.HierarchicalBinderProcessorRegistry;
 import org.dockbox.hartshorn.inject.processing.MultiMapComponentProcessorRegistry;
-import org.dockbox.hartshorn.inject.processing.ConcurrentHierarchicalBinderProcessorRegistry;
+import org.dockbox.hartshorn.inject.processing.construction.AnnotatedMethodComponentPostConstructor;
+import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
 import org.dockbox.hartshorn.inject.provider.singleton.ConcurrentHashSingletonCache;
+import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.inject.scope.ScopeAdapter;
 import org.dockbox.hartshorn.inject.scope.ScopeModuleContext;
-import org.dockbox.hartshorn.inject.ComponentKey;
-import org.dockbox.hartshorn.inject.component.ComponentRegistry;
-import org.dockbox.hartshorn.inject.DefaultFallbackCompatibleContext;
-import org.dockbox.hartshorn.inject.ComponentRequestContext;
-import org.dockbox.hartshorn.inject.binding.Binder;
-import org.dockbox.hartshorn.inject.binding.BindingFunction;
-import org.dockbox.hartshorn.inject.binding.BindingHierarchy;
-import org.dockbox.hartshorn.inject.processing.construction.ComponentPostConstructor;
-import org.dockbox.hartshorn.inject.processing.construction.AnnotatedMethodComponentPostConstructor;
-import org.dockbox.hartshorn.inject.scope.Scope;
 import org.dockbox.hartshorn.util.ContextualInitializer;
 import org.dockbox.hartshorn.util.Customizer;
 import org.dockbox.hartshorn.util.collections.HashSetMultiMap;
@@ -59,9 +59,9 @@ import org.dockbox.hartshorn.util.collections.MultiMap;
  */
 public class HierarchicalComponentProviderOrchestrator
         extends DefaultFallbackCompatibleContext
-        implements HierarchicalComponentProvider, ComponentRegistryAwareProviderOrchestrator, HierarchicalBinder {
+        implements HierarchicalComponentProvider, ComponentRegistryAwareProviderOrchestrator, HierarchicalBinder, AliasCapableBinder {
 
-    private final Map<Scope, HierarchicalBinderAwareComponentProvider> scopedProviders = Collections.synchronizedMap(new WeakHashMap<>());
+    private final Map<Scope, HierarchicalAliasBinderAwareComponentProvider> scopedProviders = Collections.synchronizedMap(new WeakHashMap<>());
     private final Scope applicationScope;
 
     private final transient InjectionCapableApplication application;
@@ -82,8 +82,8 @@ public class HierarchicalComponentProviderOrchestrator
     }
 
     @NonNull
-    private HierarchicalBinderAwareComponentProvider createComponentProvider(Scope scope) {
-        HierarchicalBinderAwareComponentProvider provider = HierarchyAwareComponentProvider.create(
+    private HierarchicalAliasBinderAwareComponentProvider createComponentProvider(Scope scope) {
+        HierarchicalAliasBinderAwareComponentProvider provider = HierarchyAwareComponentProvider.create(
                 this,
                 this.postConstructor,
                 this.application,
@@ -108,15 +108,15 @@ public class HierarchicalComponentProviderOrchestrator
         return provider;
     }
 
-    private HierarchicalBinderAwareComponentProvider getOrDefaultProvider(Scope scope) {
+    private HierarchicalAliasBinderAwareComponentProvider getOrDefaultProvider(Scope scope) {
         return this.tryGetProvider(scope, s -> this.getOrCreateProvider(this.applicationScope));
     }
 
-    private HierarchicalBinderAwareComponentProvider getOrCreateProvider(Scope scope) {
+    private HierarchicalAliasBinderAwareComponentProvider getOrCreateProvider(Scope scope) {
         return this.tryGetProvider(scope, this::createComponentProvider);
     }
 
-    private HierarchicalBinderAwareComponentProvider tryGetProvider(Scope scope, Function<Scope, HierarchicalBinderAwareComponentProvider> fallbackValue) {
+    private HierarchicalAliasBinderAwareComponentProvider tryGetProvider(Scope scope, Function<Scope, HierarchicalAliasBinderAwareComponentProvider> fallbackValue) {
         if (scope == null) {
             scope = this.applicationScope;
         }
@@ -148,7 +148,7 @@ public class HierarchicalComponentProviderOrchestrator
     }
 
     @Override
-    public <C> BindingFunction<C> bind(ComponentKey<C> key) {
+    public <C> AliasBindingFunction<C> bind(ComponentKey<C> key) {
         Scope scope = key.scope().orElse(this.scope());
         return this.getOrCreateProvider(scope).binder().bind(key);
     }
